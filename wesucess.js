@@ -13,6 +13,15 @@ if (window.location.href.includes('center')) {
         let fill = document.querySelectorAll('span[class="key"]');
         if (opt_li.length > 0 || tf_span_parents.length > 0 || fill.length > 0) {
             console.log('网页加载完毕');
+            const homework = ['15','16','17'];
+            let title = document.querySelector('span.parent').textContent;
+            let flag = homework.some(num => title.includes(num));
+            if (!flag) {
+                console.log('这不是CCZU的作业，即将跳过');
+                clearInterval(checkExist);
+                window.parent.postMessage('next_page','*');
+                return;
+            }
             // 刚开始忘写这个那数据包给我笑死了
             clearInterval(checkExist);
             if (opt_li.length > 0) {
@@ -38,22 +47,39 @@ if (window.location.href.includes('center')) {
             let confirm_bnt = document.querySelector('span.ng-confirm-btn-text');
             await new Promise(resolve => setTimeout(resolve, 500));
             confirm_bnt.click();
+            // 完成任务后发送消息给主页面，准备翻页
+            window.parent.postMessage('next_page', '*');
         } else {
             console.log('网页正在加载中...');
         }
     }, 500);
     console.log('提交完成');
-
-
 }
+
+// 主页面翻页
+if (window.top == window) {
+    console.log('正在等待翻页请求');
+    window.addEventListener('message', async (event) => {
+        if (event.data == 'next_page') {
+            console.log('收到翻页请求，正在准备翻页');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            let next_li = document.querySelector('li.c_s_3_2').children[0];
+            next_li.click();
+            console.log('翻页成功');
+            location.reload();
+        }
+    });
+}
+
 // 填空题
 async function solve_fill(fill) {
     let ques_num3 = fill.length;
     for (let j = 0; j < ques_num3; j++) {
         let avalue = fill[j].textContent;
         let parent = fill[j].parentElement;
+        let fill_input = Array.from(parent.children).find(child => child != fill[j] && child.tagName=='SPAN');
         fill_input.focus();
-        fill_input.innertextContent = avalue;
+        fill_input.textContent = avalue;
         // ng框架需要绑定，用这个冒泡dispatch测试一下(成功了)
         fill_input.dispatchEvent(new Event('input', { bubbles: true }));
         fill_input.dispatchEvent(new Event('change', { bubbles: true }));
