@@ -1,0 +1,12 @@
+// ==UserScript==
+// @name         CCZU_we_learn自动答题
+// @namespace    http://tampermonkey.net/
+// @version      2026-04-25
+// @description  CCZU
+// @author       tangseng10086
+// @match        https://welearn.sflep.com/*
+// @match        https://centercourseware.sflep.com/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=sflep.com
+// @grant        none
+// @run-at       document-start
+// ==/UserScript==
